@@ -1,0 +1,443 @@
+{
+	"compiler": {
+		"version": "0.8.24+commit.e11b9ed9"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "BadPermissions",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "bidder",
+						"type": "address"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint128",
+								"name": "durationInDays",
+								"type": "uint128"
+							},
+							{
+								"internalType": "uint256",
+								"name": "dailyVcPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint8",
+								"name": "clusterSize",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "auctionScore",
+								"type": "uint256"
+							}
+						],
+						"indexed": false,
+						"internalType": "struct AuctionContract.Bid",
+						"name": "bid",
+						"type": "tuple"
+					}
+				],
+				"name": "NewBid",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "operator",
+						"type": "address"
+					}
+				],
+				"name": "OpJustJoined",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "operator",
+						"type": "address"
+					}
+				],
+				"name": "OpJustLeft",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "expectedValidatorReturn",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "offendingOperator",
+						"type": "address"
+					}
+				],
+				"name": "failedToSign",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getMyStatus",
+				"outputs": [
+					{
+						"internalType": "enum AuctionContract.OperatorStatus",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "operator",
+						"type": "address"
+					}
+				],
+				"name": "getOperatorDetails",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "enum AuctionContract.OperatorStatus",
+								"name": "opStat",
+								"type": "uint8"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint128",
+										"name": "durationInDays",
+										"type": "uint128"
+									},
+									{
+										"internalType": "uint256",
+										"name": "dailyVcPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint8",
+										"name": "clusterSize",
+										"type": "uint8"
+									},
+									{
+										"internalType": "uint256",
+										"name": "auctionScore",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct AuctionContract.Bid",
+								"name": "bid",
+								"type": "tuple"
+							},
+							{
+								"internalType": "address",
+								"name": "assignedToStrategyModule",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lastDvtKick",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct AuctionContract.OperatorDetails",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "operator",
+						"type": "address"
+					}
+				],
+				"name": "getOperatorEscrowBalance",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "joinAuctionSet",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "leaveAuctionSet",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "maxDiscountRate",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "minDuration",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "operatorDetails",
+				"outputs": [
+					{
+						"internalType": "enum AuctionContract.OperatorStatus",
+						"name": "opStat",
+						"type": "uint8"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint128",
+								"name": "durationInDays",
+								"type": "uint128"
+							},
+							{
+								"internalType": "uint256",
+								"name": "dailyVcPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint8",
+								"name": "clusterSize",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "auctionScore",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct AuctionContract.Bid",
+						"name": "bid",
+						"type": "tuple"
+					},
+					{
+						"internalType": "address",
+						"name": "assignedToStrategyModule",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "lastDvtKick",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "contract ByzantineFinance",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address[]",
+						"name": "operators",
+						"type": "address[]"
+					}
+				],
+				"name": "processOperatorBids",
+				"outputs": [],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "numberOfOps",
+						"type": "uint256"
+					}
+				],
+				"name": "requestOperators",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "operators",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint128",
+						"name": "duration",
+						"type": "uint128"
+					},
+					{
+						"internalType": "uint256",
+						"name": "discountRate",
+						"type": "uint256"
+					}
+				],
+				"name": "setBid",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/auction.sol": "AuctionContract"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts/access/Ownable.sol": {
+			"keccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6",
+				"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
+			]
+		},
+		"@openzeppelin/contracts/utils/Context.sol": {
+			"keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12",
+				"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
+			]
+		},
+		"contracts/auction.sol": {
+			"keccak256": "0x993d96faaa0800ec6d36fef4678db70131ad5d80e1fde411fe8901af31227100",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5981276139d1c6f4116348d462a00a391e2560c7b90e617c7ddf51a9941554e3",
+				"dweb:/ipfs/QmVAiNy5i5fYFobXyTr6WKDhDXFz5qMBPMbzwwtbgBK8jW"
+			]
+		},
+		"contracts/byzantine_central.sol": {
+			"keccak256": "0x38073150f4bb4c9c578df115af65c372427cca5e1d6c0d72fd4a88dc393d509c",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://928bb0f1a7b1286578ed07a15112130a3e03b3decf223f8d959f67b200f00b91",
+				"dweb:/ipfs/QmQPudZHjX2DWh27zeTbJAG1ZCtdXARzraGB2x8yeX5Hq3"
+			]
+		},
+		"contracts/stratmod.sol": {
+			"keccak256": "0x18ea20b2e0385590abd470d6326edbed3b1cf6de81cbc4705da698f5a7ea953e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c0d28152cbd1739efd99aa9ba9f45b0e961248d106fbf353c86f225c13b10160",
+				"dweb:/ipfs/QmUXexAq5TvkDxTBpTwFqSpi3Drr7jQw7CnQc4Fk1WVhh3"
+			]
+		},
+		"hardhat/console.sol": {
+			"keccak256": "0x7434453e6d3b7d0e5d0eb7846ffdbc27f0ccf3b163591263739b628074dc103a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://49355f780520494d1d5a0f01858385e51bb5280ce0ecfb960f16995065dca395",
+				"dweb:/ipfs/QmSwJ6C5QLz6xKeQZS8wbwjU1KxRFTYfwbGmtzisd5sRW4"
+			]
+		}
+	},
+	"version": 1
+}

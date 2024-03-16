@@ -1,0 +1,143 @@
+{
+	"compiler": {
+		"version": "0.8.24+commit.e11b9ed9"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "auction",
+				"outputs": [
+					{
+						"internalType": "contract AuctionContract",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "createModule",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "strategyModule",
+				"outputs": [
+					{
+						"internalType": "contract StrategyModule",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "strategyModules",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/byzantine_central.sol": "ByzantineFinance"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts/access/Ownable.sol": {
+			"keccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6",
+				"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
+			]
+		},
+		"@openzeppelin/contracts/utils/Context.sol": {
+			"keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12",
+				"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
+			]
+		},
+		"contracts/auction.sol": {
+			"keccak256": "0x7df1848e1b6938440199218140433583fbd373d1435aecd042fcb6adaf159a7e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e38ebbf0ea60827067d28af285c515e0bcfe81fcf664d5d3144978422e173ca3",
+				"dweb:/ipfs/QmUusdzrX6q3iU7HtPs9AbhBVPZkB6FZiDsJsE9x3GPEaE"
+			]
+		},
+		"contracts/byzantine_central.sol": {
+			"keccak256": "0x38073150f4bb4c9c578df115af65c372427cca5e1d6c0d72fd4a88dc393d509c",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://928bb0f1a7b1286578ed07a15112130a3e03b3decf223f8d959f67b200f00b91",
+				"dweb:/ipfs/QmQPudZHjX2DWh27zeTbJAG1ZCtdXARzraGB2x8yeX5Hq3"
+			]
+		},
+		"contracts/stratmod.sol": {
+			"keccak256": "0x18ea20b2e0385590abd470d6326edbed3b1cf6de81cbc4705da698f5a7ea953e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c0d28152cbd1739efd99aa9ba9f45b0e961248d106fbf353c86f225c13b10160",
+				"dweb:/ipfs/QmUXexAq5TvkDxTBpTwFqSpi3Drr7jQw7CnQc4Fk1WVhh3"
+			]
+		},
+		"hardhat/console.sol": {
+			"keccak256": "0x7434453e6d3b7d0e5d0eb7846ffdbc27f0ccf3b163591263739b628074dc103a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://49355f780520494d1d5a0f01858385e51bb5280ce0ecfb960f16995065dca395",
+				"dweb:/ipfs/QmSwJ6C5QLz6xKeQZS8wbwjU1KxRFTYfwbGmtzisd5sRW4"
+			]
+		}
+	},
+	"version": 1
+}
