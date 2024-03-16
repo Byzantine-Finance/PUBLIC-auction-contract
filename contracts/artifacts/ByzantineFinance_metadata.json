@@ -11,6 +11,47 @@
 				"type": "constructor"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					}
+				],
+				"name": "OwnableInvalidOwner",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "OwnableUnauthorizedAccount",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
 				"inputs": [],
 				"name": "auction",
 				"outputs": [
@@ -26,6 +67,26 @@
 			{
 				"inputs": [],
 				"name": "createModule",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -61,11 +122,46 @@
 				],
 				"stateMutability": "view",
 				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
 			}
 		],
 		"devdoc": {
+			"errors": {
+				"OwnableInvalidOwner(address)": [
+					{
+						"details": "The owner is not a valid owner account. (eg. `address(0)`)"
+					}
+				],
+				"OwnableUnauthorizedAccount(address)": [
+					{
+						"details": "The caller account is not authorized to perform an operation."
+					}
+				]
+			},
 			"kind": "dev",
-			"methods": {},
+			"methods": {
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				}
+			},
 			"version": 1
 		},
 		"userdoc": {
@@ -107,19 +203,19 @@
 			]
 		},
 		"contracts/auction.sol": {
-			"keccak256": "0x7df1848e1b6938440199218140433583fbd373d1435aecd042fcb6adaf159a7e",
+			"keccak256": "0xeda1d55f43bfd31c670f93ab8a70cf27006aa382f5fc256ae6de1f8def3820c6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e38ebbf0ea60827067d28af285c515e0bcfe81fcf664d5d3144978422e173ca3",
-				"dweb:/ipfs/QmUusdzrX6q3iU7HtPs9AbhBVPZkB6FZiDsJsE9x3GPEaE"
+				"bzz-raw://d731783994137c87a38f2110e7f1fdeeab0ef01a0132ec88163050b0e1ae04d8",
+				"dweb:/ipfs/QmV3JodGMbxo4YYjKVtXqW9Z8DTJCpkUJCc8XARMqWxv6c"
 			]
 		},
 		"contracts/byzantine_central.sol": {
-			"keccak256": "0x38073150f4bb4c9c578df115af65c372427cca5e1d6c0d72fd4a88dc393d509c",
+			"keccak256": "0xb587fabb709d5d8f37b34c9ce77c00da47800b4baa6ac00b40630ef1964b3ccf",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://928bb0f1a7b1286578ed07a15112130a3e03b3decf223f8d959f67b200f00b91",
-				"dweb:/ipfs/QmQPudZHjX2DWh27zeTbJAG1ZCtdXARzraGB2x8yeX5Hq3"
+				"bzz-raw://f00d94484ba016c2fc9176d2b6d6517901deda0e111ba79127ab35d1d1e238b1",
+				"dweb:/ipfs/QmUfyA4B8yWzqFgwkyAUMwBE9yv8CdB7VT6ky9kM3gbPwP"
 			]
 		},
 		"contracts/stratmod.sol": {

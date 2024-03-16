@@ -279,6 +279,11 @@ contract AuctionContract {
         _;
     }
 
+    modifier onlyOwner() {
+        require(address(owner) == msg.sender);
+        _;
+    }
+
     modifier onlyParentStrategyModule(address operator) {
         require(operatorDetails[operator].assignedToStrategyModule == msg.sender, "You're not allowed to do that. Naughty naught.");
         _;
