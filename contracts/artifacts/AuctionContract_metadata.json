@@ -391,6 +391,45 @@
 				"outputs": [],
 				"stateMutability": "payable",
 				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "aprPercentageTimesAThousand",
+						"type": "uint8"
+					}
+				],
+				"name": "updateExpectedReturn",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "newMaxDiscount",
+						"type": "uint8"
+					}
+				],
+				"name": "updateMaxDiscount",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "newMinDuration",
+						"type": "uint8"
+					}
+				],
+				"name": "updateMinDuration",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
 			}
 		],
 		"devdoc": {
@@ -437,11 +476,11 @@
 			]
 		},
 		"contracts/auction.sol": {
-			"keccak256": "0x50a8e90d67fac8c9b3c96a88f512658270ee2c92cef30751ad41a3e2cfd4512e",
+			"keccak256": "0x467d61345af41317234961a3d443bc1cd0a7d85f3ce2358af69da556e8ce3953",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://8a84661ab693dfb50b72935f336999d8796391f6400f06a8ddb385144318d90d",
-				"dweb:/ipfs/QmbKUufBU8JhwTTqY6vEejeq5WeGewh2Ap4AJKhDvkU9tT"
+				"bzz-raw://53e46d8a06c0077d102b6219509e0f812b58dc5e187ee37d06fba8cb96618aa7",
+				"dweb:/ipfs/QmWc2rTMYXszsmaU7jpjud3sCdc1Vyfbj1CpVTphaNK76A"
 			]
 		},
 		"contracts/byzantine_central.sol": {

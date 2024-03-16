@@ -6,14 +6,31 @@ import "hardhat/console.sol";
 import "./byzantine_central.sol"; // Assurez-vous que le chemin d'importation est correct
 
 contract AuctionContract {
-    uint public expectedValidatorReturn = uint256(1.2 ether) / 365;
-    uint8 public maxDiscountRate = 10; // The highest possible discount rate a node op can set (in %)
-    uint8 public minDuration = 30; // Minimum duration a node op has to bid for
+    uint public expectedValidatorReturn;
+    uint8 public maxDiscountRate; // The highest possible discount rate a node op can set (in %)
+    uint8 public minDuration; // Minimum duration a node op has to bid for
 
     ByzantineFinance public owner;
 
     constructor() {
         owner = ByzantineFinance(msg.sender);
+        expectedValidatorReturn = uint256(32 ether) * 37 / 1000 / 365;
+        maxDiscountRate = 10;
+        minDuration = 30;
+    }
+
+    function updateMaxDiscount(uint8 newMaxDiscount) public {
+        maxDiscountRate = newMaxDiscount;
+    }
+
+    function updateExpectedReturn(uint8 aprPercentageTimesAThousand) public {
+        // APR % times 1000 - so 3.5% would be 3500
+        require(aprPercentageTimesAThousand <= 100000);
+        expectedValidatorReturn = 32 ether * aprPercentageTimesAThousand / 100000 / 365;
+    }
+
+    function updateMinDuration(uint8 newMinDuration) public {
+        minDuration = newMinDuration;
     }
 
     event NewBid(address indexed bidder, Bid bid);
