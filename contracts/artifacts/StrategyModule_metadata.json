@@ -4,7 +4,32 @@
 	},
 	"language": "Solidity",
 	"output": {
-		"abi": [],
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "stratModOwner",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "exitRequest",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "success",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
 		"devdoc": {
 			"kind": "dev",
 			"methods": {},
@@ -49,19 +74,27 @@
 			]
 		},
 		"contracts/auction.sol": {
-			"keccak256": "0x7df1848e1b6938440199218140433583fbd373d1435aecd042fcb6adaf159a7e",
+			"keccak256": "0x176134df2f3e351366da7986ae96b0949d73fa2bf2b3a1f181893164d8591551",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e38ebbf0ea60827067d28af285c515e0bcfe81fcf664d5d3144978422e173ca3",
-				"dweb:/ipfs/QmUusdzrX6q3iU7HtPs9AbhBVPZkB6FZiDsJsE9x3GPEaE"
+				"bzz-raw://64271d49fbd7ff5f51bdc09e0c5197008a11b38fde35479356aa6a6a938268ad",
+				"dweb:/ipfs/QmRzvbLdTEgo8EPpiDJrke3mjzikUXdas69yC33oj6xRnw"
+			]
+		},
+		"contracts/byzantine_central.sol": {
+			"keccak256": "0x7eab5ec863338be4fa89b40884cc4b32527f4605b8aa05fc303e9f192440ec5f",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e96b0c0d8b5f9076258e954e47c8621982c48301b575587e2d86de4f51e0b5dc",
+				"dweb:/ipfs/QmYLGLXHUN4Bn8oiC47v5UrreY559dknBzVBgkjG7e1Hhf"
 			]
 		},
 		"contracts/stratmod.sol": {
-			"keccak256": "0x18ea20b2e0385590abd470d6326edbed3b1cf6de81cbc4705da698f5a7ea953e",
+			"keccak256": "0x2d51cea22447f6b2fb30488a16eb499cba3926f7db29ec9324e3334e7f10bed2",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://c0d28152cbd1739efd99aa9ba9f45b0e961248d106fbf353c86f225c13b10160",
-				"dweb:/ipfs/QmUXexAq5TvkDxTBpTwFqSpi3Drr7jQw7CnQc4Fk1WVhh3"
+				"bzz-raw://f929fec2ec9553fd777b018f2108a3619d2855064f84a62d7756678df22c4f04",
+				"dweb:/ipfs/QmUC59VgrKkMXP2qbrRRB42kLMmFXN3exbf6iTRYDhqnGb"
 			]
 		},
 		"hardhat/console.sol": {

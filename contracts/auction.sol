@@ -74,6 +74,12 @@ contract AuctionContract {
         uint auctionScore;
     }
 
+
+
+/********************************************************************/
+/********   ALL ABOUT THE AUCTION SET (JOIN, UPDATE, LEAVE  *********/
+/********************************************************************/
+
     AuctionSetMember[] public auctionSet; // Bear in mind that this array maintains sorting throughout!
 
     function addToAuctionSet(address operator, uint auctionScore) internal {
@@ -142,6 +148,12 @@ contract AuctionContract {
         }
     }
 
+
+
+/********************************************************************/
+/******************   JOIN AND EXIT PROTOCOL  ***********************/
+/********************************************************************/
+
     function joinProtocol() payable external {
         require(msg.value == 1 ether, "Wrong bond value, must be 1ETH.");
         operatorDetails[msg.sender].opStat = OperatorStatus.inProtocol;
@@ -158,6 +170,12 @@ contract AuctionContract {
         operatorDetails[msg.sender].opStat = OperatorStatus.untouched;
         emit OpJustLeft(msg.sender);
     }
+
+
+
+/********************************************************************/
+/********************   MAKING OR UPDATING A BID  *******************/
+/********************************************************************/
 
     function setBid(uint128 duration, uint discountRate/*, uint8 clusterSize*/) payable external {
 
@@ -211,6 +229,12 @@ contract AuctionContract {
         }
     }
 
+
+
+/********************************************************************/
+/**********   CUSTOM GETTER FUNCTIONS  ******************************/
+/********************************************************************/
+
     function getOperatorDetails(address operator) public view returns(OperatorDetails memory) {
         return(operatorDetails[operator]);
     }
@@ -224,6 +248,12 @@ contract AuctionContract {
         return(calculateBidPrice(operatorBid.durationInDays, operatorBid.dailyVcPrice, operatorBid.clusterSize));
     }
 
+
+
+/********************************************************************/
+/**********   INTERNAL ADMIN FUNCTIONS (FOR CONSISTENCY)  ***********/
+/********************************************************************/
+
     function calculateBidPrice(uint duration, uint dailyVcPrice, uint8 clusterSize) internal pure returns(uint) {
         return(duration * dailyVcPrice / clusterSize);
     }
@@ -231,6 +261,12 @@ contract AuctionContract {
     function calculateAuctionScore(uint duration, uint dailyVcPrice, uint8 clusterSize) internal pure returns(uint) {
         return(duration * dailyVcPrice / clusterSize * ((1001^duration) / (1000^duration)));
     }
+
+
+
+/********************************************************************/
+/******************   SERVICING OPERATOR REQUESTS  ******************/
+/********************************************************************/
 
     function requestOperators(uint numberOfOps) public onlyStrategyModule() returns(address[] memory operators) {
         address[] memory operatorsToReturn;
@@ -270,6 +306,12 @@ contract AuctionContract {
         removeFromAuctionSet(msg.sender);
     }
 
+
+
+/********************************************************************/
+/******************   DEALING WITH OPERATOR BIDS  *******************/
+/********************************************************************/
+
     function processOperatorBids(address[] calldata operators) onlyStrategyModule() external view {
         for(uint i = 0; i <= operators.length; i++) {
             processOperatorBid(operators[i]);
@@ -289,10 +331,14 @@ contract AuctionContract {
         */
     }
 
-    error BadPermissions();
+
+
+/********************************************************************/
+/***********************   MODIFIERS  *******************************/
+/********************************************************************/
 
     modifier onlyStrategyModule() {
-        require(owner.strategyModules(msg.sender) == true);
+        require(owner.returnModuleStatus(msg.sender) != ByzantineFinance.stratModStatus.inactive);
         _;
     }
 

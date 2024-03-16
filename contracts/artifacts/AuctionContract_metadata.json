@@ -476,19 +476,19 @@
 			]
 		},
 		"contracts/auction.sol": {
-			"keccak256": "0x0bff9197a08202b63fe55ebf674335c83798eebac455a4817f7db30ec3a67330",
+			"keccak256": "0xf5975bee8da7be461a138f809dc00d35d19f8a56823c754a388ff7877e6a7ac0",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://78327aa9f988d5e7186e4f3b2b82a8b054b71013704bdaef9a3c06f6f9c5267a",
-				"dweb:/ipfs/QmbUVZJAMva4dGqCVv2cffT9aMr9qKSqNToPepfKbShScR"
+				"bzz-raw://96a024678f4701b42e73e67724c176ae3656aceb97777b489a0e04485cabc24a",
+				"dweb:/ipfs/QmX6a46sjHp5uB6zVY5R3f6xCm3YAbvvyS8avB7yV677DX"
 			]
 		},
 		"contracts/byzantine_central.sol": {
-			"keccak256": "0xb587fabb709d5d8f37b34c9ce77c00da47800b4baa6ac00b40630ef1964b3ccf",
+			"keccak256": "0x0a4ec664236ee2bf157d2f5b36fab5ced798d537849510446b85d01fa0dab472",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f00d94484ba016c2fc9176d2b6d6517901deda0e111ba79127ab35d1d1e238b1",
-				"dweb:/ipfs/QmUfyA4B8yWzqFgwkyAUMwBE9yv8CdB7VT6ky9kM3gbPwP"
+				"bzz-raw://e2331c3049f8235b98a795b802919a65bc85141b0d064718c103c39b93ba2719",
+				"dweb:/ipfs/QmNwMXXtVcBduxMGWAGaGtYNZDecyFfaP46cqDFfHCpWnS"
 			]
 		},
 		"contracts/stratmod.sol": {
