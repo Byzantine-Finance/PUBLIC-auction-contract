@@ -7,9 +7,11 @@ import "./byzantine_central.sol"; // Assurez-vous que le chemin d'importation es
 
 contract AuctionContract {
     uint constant PERCENTAGE_SCALING_FACTOR = 10^18;
+    uint constant ETHER_SCALING_FACTOR = 10^18;
     uint public expectedValidatorReturn; // In ETH
     uint public maxDiscountRate; // The highest possible discount rate a node op can set (in %)
     uint public minDuration; // Minimum duration a node op has to bid for
+    uint public operatorBond; // Minimum duration a node op has to bid for
 
     ByzantineFinance public owner;
 
@@ -18,10 +20,15 @@ contract AuctionContract {
         expectedValidatorReturn = uint256(32 ether) * 37 / 1000 / 365;
         maxDiscountRate = 15 * PERCENTAGE_SCALING_FACTOR;
         minDuration = 30;
+        operatorBond = 1 ether;
     }
 
     function updateMaxDiscount(uint8 newMaxDiscount) public {
         maxDiscountRate = newMaxDiscount * PERCENTAGE_SCALING_FACTOR;
+    }
+
+    function updateOperatorBond(uint newOperatorBond) public {
+        operatorBond = newOperatorBond;
     }
 
     function updateExpectedReturn(uint256 aprUpscaledPercentage) public {
@@ -156,7 +163,7 @@ contract AuctionContract {
 /********************************************************************/
 
     function joinProtocol() payable external {
-        require(msg.value == 1 ether, "Wrong bond value, must be 1ETH.");
+        require(msg.value == operatorBond, "Wrong bond value, must be 1ETH.");
         operatorDetails[msg.sender].opStat = OperatorStatus.inProtocol;
         emit OpJustJoined(msg.sender);
     }
@@ -179,6 +186,8 @@ contract AuctionContract {
 /********************************************************************/
 
     function setBid(uint128 duration, uint discountRate/*, uint8 clusterSize*/) payable external {
+
+        require(operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork || operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol, "You need to deposit your operator bond first!");
 
         // Make sure that the parameters are nice and good
         require(duration >= minDuration, "Duration too short");
@@ -226,7 +235,7 @@ contract AuctionContract {
             emit NewBid(msg.sender, myBid);
 
         } else {
-            revert();
+            revert("Naughty naughty.");
         }
     }
 
@@ -235,10 +244,6 @@ contract AuctionContract {
 /********************************************************************/
 /**********   CUSTOM GETTER FUNCTIONS  ******************************/
 /********************************************************************/
-
-    function getOperatorDetails(address operator) public view returns(OperatorDetails memory) {
-        return(operatorDetails[operator]);
-    }
 
     function getStatus(address operator) public view returns(OperatorStatus) {
         return(operatorDetails[operator].opStat);
