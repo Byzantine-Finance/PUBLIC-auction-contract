@@ -395,9 +395,9 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint8",
+						"internalType": "uint256",
 						"name": "aprPercentageTimesAThousand",
-						"type": "uint8"
+						"type": "uint256"
 					}
 				],
 				"name": "updateExpectedReturn",
@@ -476,11 +476,11 @@
 			]
 		},
 		"contracts/auction.sol": {
-			"keccak256": "0x467d61345af41317234961a3d443bc1cd0a7d85f3ce2358af69da556e8ce3953",
+			"keccak256": "0x0bff9197a08202b63fe55ebf674335c83798eebac455a4817f7db30ec3a67330",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://53e46d8a06c0077d102b6219509e0f812b58dc5e187ee37d06fba8cb96618aa7",
-				"dweb:/ipfs/QmWc2rTMYXszsmaU7jpjud3sCdc1Vyfbj1CpVTphaNK76A"
+				"bzz-raw://78327aa9f988d5e7186e4f3b2b82a8b054b71013704bdaef9a3c06f6f9c5267a",
+				"dweb:/ipfs/QmbUVZJAMva4dGqCVv2cffT9aMr9qKSqNToPepfKbShScR"
 			]
 		},
 		"contracts/byzantine_central.sol": {

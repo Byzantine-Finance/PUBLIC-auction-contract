@@ -23,7 +23,7 @@ contract AuctionContract {
         maxDiscountRate = newMaxDiscount;
     }
 
-    function updateExpectedReturn(uint8 aprPercentageTimesAThousand) public {
+    function updateExpectedReturn(uint256 aprPercentageTimesAThousand) public {
         // APR % times 1000 - so 3.5% would be 3500
         require(aprPercentageTimesAThousand <= 100000);
         expectedValidatorReturn = 32 ether * aprPercentageTimesAThousand / 100000 / 365;
