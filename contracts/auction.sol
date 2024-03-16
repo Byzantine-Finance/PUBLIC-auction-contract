@@ -7,7 +7,7 @@ import "./byzantine_central.sol"; // Assurez-vous que le chemin d'importation es
 
 contract AuctionContract {
     uint constant PERCENTAGE_SCALING_FACTOR = 10^18;
-    uint public expectedValidatorReturn; // In % 
+    uint public expectedValidatorReturn; // In ETH
     uint public maxDiscountRate; // The highest possible discount rate a node op can set (in %)
     uint public minDuration; // Minimum duration a node op has to bid for
 
@@ -272,6 +272,11 @@ contract AuctionContract {
     function requestOperators(uint numberOfOps) public onlyStrategyModule() returns(address[] memory operators) {
         address[] memory operatorsToReturn;
 
+        /*
+        TO ADD:
+        - Do NOT slot in ops marked as "recently inactive" (we have the "lastDvtKick" property for that
+        */
+
         for(uint i = 0; i <= numberOfOps; i++) {
             address operator = auctionSet[i].operator;
             if(operatorsToReturn.length < numberOfOps) {
@@ -285,17 +290,18 @@ contract AuctionContract {
             }
         }
 
-        /*
-        TO ADD:
-        - Do NOT slot in ops marked as "recently inactive" (we have the "lastDvtKick" property for that
-        */
-
-        for(uint i = 0; i <= operatorsToReturn.length; i++) {
-            operatorDetails[operatorsToReturn[i]].assignedToStrategyModule = msg.sender;
-            operatorDetails[operatorsToReturn[i]].opStat = OperatorStatus.pendingForDvt;
+        if(operatorsToReturn.length < numberOfOps) {
+            revert("Not enough operators in auction set!");
+        } else {
+            return(operatorsToReturn);
         }
+    }
 
-        return(operatorsToReturn);
+    function releaseOperators(address[] memory operators) public onlyStrategyModule() {
+        for(uint i = 0; i <= operators.length; i++) {
+            operatorDetails[operators[i]].assignedToStrategyModule = address(0);
+            operatorDetails[operators[i]].opStat = OperatorStatus.inProtocol;
+        }
     }
 
     function failedToSign(address offendingOperator) onlyStrategyModule() onlyParentStrategyModule(offendingOperator) public {

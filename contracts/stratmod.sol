@@ -7,22 +7,37 @@ import "./auction.sol";
 contract StrategyModule {
     address payable owner;
     address byzHQ;
+    AuctionContract public auctionContract;
 
-    constructor(address stratModOwner) {
-        owner = payable(stratModOwner);
+    uint8 dvtClusterSize;
+
+    address[] public operatorSet;
+
+    constructor(uint8 _dvtClusterSize, address _stratModOwner, address _auctionContract) {
+        owner = payable(_stratModOwner);
         byzHQ = msg.sender;
+        auctionContract = AuctionContract(_auctionContract);
+
+        dvtClusterSize = _dvtClusterSize;
+
+        operatorSet = new address[](_dvtClusterSize);
+
+        auctionContract.requestOperators(dvtClusterSize);
+
     }
 
-    // MAKE THIS GUY REQUEST OPERATORS
-
-
-
-
+    function releaseOperators() private {
+        auctionContract.releaseOperators(operatorSet);
+        for(uint i = 0; i <= 0; i++) {
+            operatorSet[i] = address(0);
+        }
+    }
 
     function exitRequest() public onlyHQorOwner returns(bool success) {
         // Exit DVT, close down everything, etc.
         // Will get a lot more complicated as soon as things get spicy
 
+        releaseOperators();
         (bool exitSuccess, ) = owner.call{ value: address(this).balance }("");
 
         return(exitSuccess);

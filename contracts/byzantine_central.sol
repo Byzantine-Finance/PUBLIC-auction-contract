@@ -10,6 +10,8 @@ contract ByzantineFinance is Ownable {
     AuctionContract public auction;
     StrategyModule public strategyModule;
 
+    uint8 dvtClusterSize = 4;
+
     enum stratModStatus {
         inactive,
         activating,
@@ -38,7 +40,7 @@ contract ByzantineFinance is Ownable {
     function createDedicatedModule() payable public onlyOwner {
         require(msg.value == 32 ether, "Exactly 32ETH are required. Please provide that amount.");
         address stratModOwner = msg.sender;
-        strategyModule = new StrategyModule(stratModOwner); // Create a new strategy module
+        strategyModule = new StrategyModule(dvtClusterSize, stratModOwner, address(auction)); // Create a new strategy module
         strategyModules[address(strategyModule)] = stratModDetails(stratModStatus.activating, stratModOwner); // Add this strategy module to our mapping to allow it to call for operators
         StrategyModule[] memory myStratMods = myStrategyModules[stratModOwner];
         myStratMods[myStratMods.length] = strategyModule;
