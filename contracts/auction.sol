@@ -198,8 +198,8 @@ contract AuctionContract {
         return(operatorDetails[operator]);
     }
 
-    function getMyStatus() public view returns(OperatorStatus) {
-        return(operatorDetails[msg.sender].opStat);
+    function getStatus(address operator) public view returns(OperatorStatus) {
+        return(operatorDetails[operator].opStat);
     }
 
     function getOperatorEscrowBalance(address operator) public view returns(uint) {
