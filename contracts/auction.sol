@@ -6,27 +6,28 @@ import "hardhat/console.sol";
 import "./byzantine_central.sol"; // Assurez-vous que le chemin d'importation est correct
 
 contract AuctionContract {
-    uint public expectedValidatorReturn;
-    uint8 public maxDiscountRate; // The highest possible discount rate a node op can set (in %)
-    uint8 public minDuration; // Minimum duration a node op has to bid for
+    uint constant PERCENTAGE_SCALING_FACTOR = 10^18;
+    uint public expectedValidatorReturn; // In % 
+    uint public maxDiscountRate; // The highest possible discount rate a node op can set (in %)
+    uint public minDuration; // Minimum duration a node op has to bid for
 
     ByzantineFinance public owner;
 
     constructor() {
         owner = ByzantineFinance(msg.sender);
         expectedValidatorReturn = uint256(32 ether) * 37 / 1000 / 365;
-        maxDiscountRate = 10;
+        maxDiscountRate = 10 * PERCENTAGE_SCALING_FACTOR;
         minDuration = 30;
     }
 
     function updateMaxDiscount(uint8 newMaxDiscount) public {
-        maxDiscountRate = newMaxDiscount;
+        maxDiscountRate = newMaxDiscount * PERCENTAGE_SCALING_FACTOR;
     }
 
-    function updateExpectedReturn(uint256 aprPercentageTimesAThousand) public {
+    function updateExpectedReturn(uint256 aprUpscaledPercentage) public {
         // APR % times 1000 - so 3.5% would be 3500
-        require(aprPercentageTimesAThousand <= 100000);
-        expectedValidatorReturn = 32 ether * aprPercentageTimesAThousand / 100000 / 365;
+        require(aprUpscaledPercentage <= 100 * PERCENTAGE_SCALING_FACTOR);
+        expectedValidatorReturn = uint256(32 ether) * aprUpscaledPercentage / (100 * PERCENTAGE_SCALING_FACTOR) / 365;
     }
 
     function updateMinDuration(uint8 newMinDuration) public {
@@ -188,7 +189,7 @@ contract AuctionContract {
 
         // Calculate what the bid should be and then make sure that exactly this amount was received
         uint8 clusterSize = 1; // This one needs to be updated later
-        uint256 dailyVcPrice = expectedReturn * (1 - discountRate);
+        uint256 dailyVcPrice = expectedReturn * (1 - discountRate / PERCENTAGE_SCALING_FACTOR);
 
         if (operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork) {
             
