@@ -83,6 +83,30 @@
 				"type": "event"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "auctionSet",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "operator",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "auctionScore",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "expectedValidatorReturn",
 				"outputs": [
@@ -205,14 +229,14 @@
 			},
 			{
 				"inputs": [],
-				"name": "joinAuctionSet",
+				"name": "joinProtocol",
 				"outputs": [],
 				"stateMutability": "payable",
 				"type": "function"
 			},
 			{
 				"inputs": [],
-				"name": "leaveAuctionSet",
+				"name": "leaveProtocol",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -407,11 +431,11 @@
 			]
 		},
 		"contracts/auction.sol": {
-			"keccak256": "0x993d96faaa0800ec6d36fef4678db70131ad5d80e1fde411fe8901af31227100",
+			"keccak256": "0x0630ce96e4a27396da10ed63a1ca5b94e572d09ee2645a1a6e0d8cb965e96158",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5981276139d1c6f4116348d462a00a391e2560c7b90e617c7ddf51a9941554e3",
-				"dweb:/ipfs/QmVAiNy5i5fYFobXyTr6WKDhDXFz5qMBPMbzwwtbgBK8jW"
+				"bzz-raw://d2d0bea0f643f4b83e4ff7b0f8a37a2fe6de69319265305b70b8e8905af3eb31",
+				"dweb:/ipfs/QmQbXyviCqiyxjrDtsmRFgUyMTcZKC521XgGXeie8Atuvw"
 			]
 		},
 		"contracts/byzantine_central.sol": {

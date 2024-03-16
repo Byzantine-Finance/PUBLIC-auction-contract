@@ -37,7 +37,7 @@ contract AuctionContract {
 
     enum OperatorStatus {
         untouched, // Not a member
-        inAuctionSet, // Bond given, no bid set yet
+        inProtocol, // Bond given, no bid set yet
         seekingWork, // Bond given, bid set
         pendingForDvt, // In process to join DVT cluster
         activeInDvt // Hard at work earning that sweet, sweet internet money
@@ -52,17 +52,91 @@ contract AuctionContract {
 
     mapping(address => OperatorDetails) public operatorDetails;
 
-    function joinAuctionSet() payable external {
-        require(msg.value == 1 ether, "Wrong bond value");
-        operatorDetails[msg.sender].opStat = OperatorStatus.inAuctionSet;
+    struct AuctionSetMember {
+        address operator;
+        uint auctionScore;
+    }
+
+    AuctionSetMember[] public auctionSet; // Bear in mind that this array maintains sorting throughout!
+
+    function addToAuctionSet(address operator, uint auctionScore) internal {
+        require(operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol, "Can't do that right now.");
+
+        uint targetPosition = 0;
+        for(uint i = auctionSet.length - 1; i >= 0; i--) {
+            if(auctionSet[i].auctionScore <= auctionScore) {
+                targetPosition = i;
+                auctionSet[i + 1] = auctionSet[i];
+            } else {
+                break;
+            }
+        }
+
+        auctionSet[targetPosition] = AuctionSetMember(operator, auctionScore);
+
+    }
+
+    function updateAuctionSet(address operator, uint newAuctionScore) internal {
+        require(operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork, "Can't do that right now.");
+
+        uint targetPosition = 0;
+        uint currentPosition = 0;
+        for(uint i = auctionSet.length - 1; i >= 0; i--) {
+            if(auctionSet[i].auctionScore <= newAuctionScore) {
+                targetPosition = i;
+                auctionSet[i + 1] = auctionSet[i];
+            }
+
+            if(auctionSet[i].operator == operator) {
+                currentPosition = i;
+            }
+        }
+
+        if (targetPosition > currentPosition) {
+            for(uint i = currentPosition + 1; i <= targetPosition; i++) {
+                auctionSet[i - 1] = auctionSet[i];
+            }
+        } else if (targetPosition < currentPosition) {
+            for(uint i = currentPosition - 1; i >= targetPosition; i--) {
+                auctionSet[i + 1] = auctionSet[i];
+            }
+        }
+
+        auctionSet[targetPosition] = AuctionSetMember(operator, newAuctionScore);
+
+    }
+
+    function removeBySwapping(uint[] storage array, uint index) internal {
+        require(index < array.length, "Index out of bounds");
+        array[index] = array[array.length - 1];
+        array.pop(); // Remove the last element
+    }
+
+    function removeFromAuctionSet(address operator) internal {
+        operatorDetails[operator].opStat = OperatorStatus.inProtocol;
+        operatorDetails[operator].bid = Bid(0, 0, 0, 0);
+
+        for(uint i = 0; i <= auctionSet.length; i++) {
+            if(auctionSet[i].operator == operator) {
+                auctionSet[i] = auctionSet[auctionSet.length - 1];
+                auctionSet.pop();
+                break;
+            }
+        }
+    }
+
+    function joinProtocol() payable external {
+        require(msg.value == 1 ether, "Wrong bond value, must be 1ETH.");
+        operatorDetails[msg.sender].opStat = OperatorStatus.inProtocol;
         emit OpJustJoined(msg.sender);
     }
 
-    function leaveAuctionSet() external {
-        require(operatorDetails[msg.sender].opStat == OperatorStatus.inAuctionSet || operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork, "Can't perform this action with your current status");
+    function leaveProtocol() external {
+        require(operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol || operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork, "Can't perform this action with your current status");
         if(operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork) {
             (bool success, ) = msg.sender.call{value: getOperatorEscrowBalance(msg.sender)}("");
             require(success);
+            removeFromAuctionSet(msg.sender);
         }
         operatorDetails[msg.sender].opStat = OperatorStatus.untouched;
         emit OpJustLeft(msg.sender);
@@ -96,19 +170,23 @@ contract AuctionContract {
                 require(success, "Payment failed!");
             }
             // If all goes well, then we note down the bid of the operators
-            Bid memory myBid = Bid(duration, dailyVcPrice, clusterSize, calculateAuctionScore(duration, dailyVcPrice, clusterSize));
+            uint auctionScore = calculateAuctionScore(duration, dailyVcPrice, clusterSize);
+            Bid memory myBid = Bid(duration, dailyVcPrice, clusterSize, auctionScore);
             operatorDetails[msg.sender].bid = myBid;
+            updateAuctionSet(msg.sender, auctionScore);
             emit NewBid(msg.sender, myBid);
 
-        } else if (operatorDetails[msg.sender].opStat == OperatorStatus.inAuctionSet) {
+        } else if (operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol) {
 
             // Do something for someone that has no bid yet.
             require(msg.value == calculateBidPrice(duration, dailyVcPrice, clusterSize), "That is not the right payment amount.");
 
             // If all goes well, then we note down the bid of the operators
-            Bid memory myBid = Bid(duration, dailyVcPrice, clusterSize, calculateAuctionScore(duration, dailyVcPrice, clusterSize));
+            uint auctionScore = calculateAuctionScore(duration, dailyVcPrice, clusterSize);
+            Bid memory myBid = Bid(duration, dailyVcPrice, clusterSize, auctionScore);
             operatorDetails[msg.sender].opStat = OperatorStatus.seekingWork;
             operatorDetails[msg.sender].bid = myBid;
+            addToAuctionSet(msg.sender, auctionScore);
             emit NewBid(msg.sender, myBid);
 
         } else {
@@ -138,16 +216,27 @@ contract AuctionContract {
     }
 
     function requestOperators(uint numberOfOps) public onlyStrategyModule() returns(address[] memory operators) {
-        address[] memory operatorsToReturn = new address[](numberOfOps);
-/*
-- requestOperators
-    - Rank operators
-    - Do NOT slot in ops marked as "recently inactive" (we have the "lastDvtKick" property for that
+        address[] memory operatorsToReturn;
+
+        for(uint i = 0; i <= numberOfOps; i++) {
+            address operator = auctionSet[i].operator;
+            if(operatorsToReturn.length < numberOfOps) {
+                if (operatorDetails[operator].opStat == OperatorStatus.seekingWork) {
+                    operatorsToReturn[operatorsToReturn.length + 1] = operator;
+                    operatorDetails[operator].assignedToStrategyModule = msg.sender;
+                    operatorDetails[operator].opStat = OperatorStatus.pendingForDvt;
+                }
+            } else {
+                break;
+            }
+        }
+
+        /*
+        TO ADD:
+        - Do NOT slot in ops marked as "recently inactive" (we have the "lastDvtKick" property for that
         */
 
-
         for(uint i = 0; i <= operatorsToReturn.length; i++) {
-            require(operatorDetails[operatorsToReturn[i]].opStat == OperatorStatus.seekingWork);
             operatorDetails[operatorsToReturn[i]].assignedToStrategyModule = msg.sender;
             operatorDetails[operatorsToReturn[i]].opStat = OperatorStatus.pendingForDvt;
         }
@@ -155,16 +244,13 @@ contract AuctionContract {
         return(operatorsToReturn);
     }
 
-
-
     function failedToSign(address offendingOperator) onlyStrategyModule() onlyParentStrategyModule(offendingOperator) public {
         // A function that gets called whenever some operator was selected for a DVT cluster but did not sign
 
         operatorDetails[offendingOperator].lastDvtKick = block.timestamp;
         (bool success, ) = offendingOperator.call{value: getOperatorEscrowBalance(offendingOperator)}("");
         require(success);
-        operatorDetails[offendingOperator].opStat = OperatorStatus.inAuctionSet;
-        operatorDetails[offendingOperator].bid = Bid(0, 0, 0, 0);
+        removeFromAuctionSet(msg.sender);
     }
 
     function processOperatorBids(address[] calldata operators) onlyStrategyModule() external view {
@@ -201,8 +287,8 @@ contract AuctionContract {
 
 /*
 
-- Rank node operators in a useful way
 - Process node operator payment
+    - Where does the money go?
 - Handle payment regularisation
     - 
 - Gas optimisation
