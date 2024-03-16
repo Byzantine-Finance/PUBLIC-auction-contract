@@ -16,7 +16,7 @@ contract AuctionContract {
     constructor() {
         owner = ByzantineFinance(msg.sender);
         expectedValidatorReturn = uint256(32 ether) * 37 / 1000 / 365;
-        maxDiscountRate = 10 * PERCENTAGE_SCALING_FACTOR;
+        maxDiscountRate = 15 * PERCENTAGE_SCALING_FACTOR;
         minDuration = 30;
     }
 
