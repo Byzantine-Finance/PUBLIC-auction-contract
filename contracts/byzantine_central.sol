@@ -116,16 +116,14 @@ contract ByzantineFinance is Ownable {
         return(address(strategyModule));
     }
 
-    function updateStratModuleStatus(address _stratModOwner) external {
-    }
-
     function returnModuleStatus(address _strategyModule) public view returns(stratModStatus) {
         return(strategyModules[_strategyModule].status);
     }
 
     function exitStratModule(StrategyModule targetModule) public {
-        require(msg.sender == strategyModules[address(targetModule)].stratModOwner);
-        require(strategyModules[address(targetModule)].status == stratModStatus.activating || strategyModules[address(targetModule)].status == stratModStatus.activating);
+        require(msg.sender == strategyModules[address(targetModule)].stratModOwner, "You're not allowed to do that!");
+        require(strategyModules[address(targetModule)].status == stratModStatus.activating || strategyModules[address(targetModule)].status == stratModStatus.active, "That request can't be acted on.");
+        console.log("1");
         bool success = targetModule.exitRequest();
         require(success);
     }

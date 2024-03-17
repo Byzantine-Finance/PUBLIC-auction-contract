@@ -26,8 +26,6 @@ contract StrategyModule {
 
         dvtClusterSize = _dvtClusterSize;
 
-        byzHQ.updateStratModuleStatus(owner);
-
         operatorSet = new address[](_dvtClusterSize);
         console.log("going pretty well!");
 
@@ -47,10 +45,11 @@ contract StrategyModule {
     function exitRequest() public onlyHQorOwner returns(bool success) {
         // Exit DVT, close down everything, etc.
         // Will get a lot more complicated as soon as things get spicy
-
+        console.log("2");
         releaseOperators();
+        console.log("3");
         (bool exitSuccess, ) = owner.call{ value: address(this).balance }("");
-
+        console.log("4");
         return(exitSuccess);
     }
 

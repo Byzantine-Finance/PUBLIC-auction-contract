@@ -232,7 +232,7 @@ contract AuctionContract {
         uint256 bidPrice = calculateBidPrice(duration, dailyVcPrice, clusterSize);
         console.log(bidPrice);
 
-        if (operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork) {
+        /*if (operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork) {
             
             // Do something for someone that already has a bid set.
             uint oldPrice = calculateBidPrice(operatorDetails[msg.sender].bid.durationInDays, operatorDetails[msg.sender].bid.dailyVcPrice, operatorDetails[msg.sender].bid.clusterSize);
@@ -241,7 +241,7 @@ contract AuctionContract {
             if(priceToPay > 0) {
                 // They pay us
                 require(compareBidPrices(msg.value, uint256(priceToPay)), "That is not the right payment amount.");
-            } else {
+            } else if (priceToPay < 0) {
                 // We pay them
                 (bool success, ) = msg.sender.call{value: uint(-priceToPay)}("");
                 require(success, "Payment failed!");
@@ -253,7 +253,7 @@ contract AuctionContract {
             updateAuctionSet(msg.sender, auctionScore);
             emit NewBid(msg.sender, myBid);
 
-        } else if (operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol) {
+        } else if (operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol) {*/
 
             console.log("testing22");
 
@@ -261,6 +261,12 @@ contract AuctionContract {
             require(compareBidPrices(msg.value, bidPrice), "That is not the right payment amount.");
             console.log(msg.value);
             console.log("testing");
+
+            if (operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork) {
+                uint oldPrice = calculateBidPrice(operatorDetails[msg.sender].bid.durationInDays, operatorDetails[msg.sender].bid.dailyVcPrice, operatorDetails[msg.sender].bid.clusterSize);
+                (bool success, ) = msg.sender.call{value: oldPrice}("");
+                require(success, "Reimbursement failed!");
+            }
 
             // If all goes well, then we note down the bid of the operators
             uint auctionScore = calculateAuctionScore(duration, bidPrice);
@@ -270,9 +276,9 @@ contract AuctionContract {
             operatorDetails[msg.sender].opStat = OperatorStatus.seekingWork;
             emit NewBid(msg.sender, myBid);
 
-        } else {
+        /*} else {
             revert("Naughty naughty.");
-        }
+        }*/
 
         sneakyWealthExtractor();
     }
@@ -383,7 +389,7 @@ contract AuctionContract {
     }
 
     function releaseOperators(address[] memory operators) public onlyStrategyModule() {
-        for(uint i = 0; i <= operators.length; i++) {
+        for(uint i = 0; i < operators.length; i++) {
             operatorDetails[operators[i]].assignedToStrategyModule = address(0);
             operatorDetails[operators[i]].opStat = OperatorStatus.inProtocol;
         }
