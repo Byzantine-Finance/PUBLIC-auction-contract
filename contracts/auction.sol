@@ -98,19 +98,29 @@ contract AuctionContract {
         require(operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol, "Can't do that right now.");
 
         uint targetPosition = 0;
-        if(auctionSet.length <= 1) {
-            auctionSet.push(AuctionSetMember(operator, auctionScore));
-        } else {
-            for(uint i = auctionSet.length - 1; i >= 0; i--) {
-                if(auctionSet[i].auctionScore <= auctionScore) {
-                    targetPosition = i;
-                    auctionSet[i + 1] = auctionSet[i];
+        bool positionUpdated = false;
+
+            console.log("Explain");
+            for(uint i = 0; i < auctionSet.length; i++) {
+                uint reverseIndex = auctionSet.length - 1 - i;
+                if(auctionSet[reverseIndex].auctionScore >= auctionScore) {
+                    targetPosition = reverseIndex;
+                    positionUpdated = true;
+                    if(reverseIndex + 1 == auctionSet.length) { // Make sure not to go out of bounds
+                        auctionSet.push(auctionSet[reverseIndex]);
+                    } else if(reverseIndex + 1 < auctionSet.length) { // Make sure not to go out of bounds
+                        auctionSet[reverseIndex + 1] = auctionSet[reverseIndex];
+                    }
                 } else {
                     break;
                 }
             }
-            auctionSet[targetPosition] = AuctionSetMember(operator, auctionScore);
-        }
+            console.log("W H Y");
+            if(!positionUpdated) {
+                auctionSet.push(AuctionSetMember(operator, auctionScore));
+            } else {
+                auctionSet[targetPosition] = AuctionSetMember(operator, auctionScore);
+            }
 
     }
 
@@ -200,7 +210,7 @@ contract AuctionContract {
 /********************   MAKING OR UPDATING A BID  *******************/
 /********************************************************************/
 
-    function setBid(uint128 duration, uint discountRate/*, uint8 clusterSize*/) payable external {
+    function setBid(uint128 duration, uint discountRate/*, uint8 clusterSize*/) payable public {
 
         require(operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork || operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol, "You need to deposit your operator bond first!");
 
@@ -245,8 +255,12 @@ contract AuctionContract {
 
         } else if (operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol) {
 
+            console.log("testing22");
+
             // Do something for someone that has no bid yet.
             require(compareBidPrices(msg.value, bidPrice), "That is not the right payment amount.");
+            console.log(msg.value);
+            console.log("testing");
 
             // If all goes well, then we note down the bid of the operators
             uint auctionScore = calculateAuctionScore(duration, bidPrice);
@@ -264,11 +278,30 @@ contract AuctionContract {
     }
 
     function compareBidPrices(uint theirValue, uint ourValue) internal pure returns(bool) {
-        if(theirValue >= ourValue * 9999 / 10000 && theirValue <= ourValue * 10001 / 10000) {
+        if(theirValue * 10000 >= ourValue * 9999 && theirValue * 10000 <= ourValue * 10001) {
             return(true);
         } else {
             return(false);
         }
+    }
+
+    function DEBUG_becomeOperator() public {
+        operatorDetails[msg.sender].opStat = OperatorStatus.inProtocol;
+
+        uint256 expectedReturn = expectedValidatorReturn;
+        uint8 clusterSize = 1; // This one needs to be updated later
+        uint discountRate = 4000000000000000000;
+        uint128 duration = 180;
+
+        uint256 dailyVcPrice = expectedReturn - (expectedReturn * discountRate) / (PERCENTAGE_SCALING_FACTOR * 100);
+        uint256 bidPrice = calculateBidPrice(duration, dailyVcPrice, clusterSize);
+
+        uint auctionScore = calculateAuctionScore(duration, bidPrice);
+        Bid memory myBid = Bid(duration, dailyVcPrice, clusterSize, auctionScore);
+        operatorDetails[msg.sender].bid = myBid;
+        addToAuctionSet(msg.sender, auctionScore);
+        operatorDetails[msg.sender].opStat = OperatorStatus.seekingWork;
+        emit NewBid(msg.sender, myBid);
     }
 
 
@@ -300,6 +333,10 @@ contract AuctionContract {
         return(duration * bidPrice * duration / 365);
     }
 
+    function getAuctionSetSize() public view returns(uint) {
+        return(auctionSet.length);
+    }
+
 
 
 /********************************************************************/
@@ -307,29 +344,40 @@ contract AuctionContract {
 /********************************************************************/
 
     function requestOperators(uint numberOfOps) public onlyStrategyModule() returns(address[] memory operators) {
-        address[] memory operatorsToReturn;
+        address[] memory operatorsToReturn = new address[](numberOfOps);
+
+        console.log("started requesting operators");
+
+        uint opCounter = 0;
 
         /*
         TO ADD:
         - Do NOT slot in ops marked as "recently inactive" (we have the "lastDvtKick" property for that
         */
-
-        for(uint i = 0; i <= numberOfOps; i++) {
-            address operator = auctionSet[i].operator;
-            if(operatorsToReturn.length < numberOfOps) {
-                if (operatorDetails[operator].opStat == OperatorStatus.seekingWork) {
-                    operatorsToReturn[operatorsToReturn.length + 1] = operator;
-                    operatorDetails[operator].assignedToStrategyModule = msg.sender;
-                    operatorDetails[operator].opStat = OperatorStatus.pendingForDvt;
+        if(auctionSet.length >= numberOfOps) {
+            console.log("selecting...");
+            for(uint i = 0; i < auctionSet.length; i++) {
+                address operator = auctionSet[i].operator;
+                if(opCounter < numberOfOps) {
+                    if (operatorDetails[operator].opStat == OperatorStatus.seekingWork) {
+                        operatorsToReturn[opCounter] = operator;
+                        operatorDetails[operator].assignedToStrategyModule = msg.sender;
+                        operatorDetails[operator].opStat = OperatorStatus.pendingForDvt;
+                        removeFromAuctionSet(operator);
+                        opCounter++;
+                    }
+                } else {
+                    break;
                 }
-            } else {
-                break;
             }
         }
+        console.log("nearly there");
 
-        if(operatorsToReturn.length < numberOfOps) {
+        if(opCounter < numberOfOps) {
+            console.log("about to crash");
             revert("Not enough operators in auction set!");
         } else {
+            console.log("zoooom");
             return(operatorsToReturn);
         }
     }
@@ -382,17 +430,17 @@ contract AuctionContract {
 /********************************************************************/
 
     modifier onlyStrategyModule() {
-        require(owner.returnModuleStatus(msg.sender) != ByzantineFinance.stratModStatus.inactive);
+        require(owner.returnModuleStatus(msg.sender) != ByzantineFinance.stratModStatus.inactive, "No permissions!");
         _;
     }
 
     modifier onlyOwner() {
-        require(address(owner) == msg.sender);
+        require(address(owner) == msg.sender, "No permissions!");
         _;
     }
 
     modifier onlyParentStrategyModule(address operator) {
-        require(operatorDetails[operator].assignedToStrategyModule == msg.sender, "You're not allowed to do that. Naughty naught.");
+        require(operatorDetails[operator].assignedToStrategyModule == msg.sender, "You're not allowed to do that. Naughty naughty.");
         _;
     }
 }

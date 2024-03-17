@@ -84,8 +84,9 @@ contract ByzantineFinance is Ownable {
 
     // FULL STAKERS
 
-    function createDedicatedModule() payable public onlyOwner {
+    function createDedicatedModule() payable public {
         require(msg.value == 32 ether, "Exactly 32ETH are required. Please provide that amount.");
+        console.log("a special cluster for a special boy");
         address stratModOwner = msg.sender;
         address myNewModule = createStratModule(stratModOwner, dvtClusterSize, address(auction));
         console.log(myNewModule);
@@ -95,12 +96,27 @@ contract ByzantineFinance is Ownable {
     // STRATEGY MODULE SETUP
 
     function createStratModule(address stratModOwner, uint8 _dvtClusterSize, address _auctionContract) public returns(address) {
+        console.log("time to create");
+        
+        // Create strategy module
         strategyModule = (new StrategyModule){value: 32 ether}(_dvtClusterSize, stratModOwner, _auctionContract); // Create a new strategy module
-        strategyModules[address(strategyModule)] = stratModDetails(stratModStatus.activating, stratModOwner); // Add this strategy module to our mapping to allow it to call for operators
-        StrategyModule[] memory myStratMods = myStrategyModules[stratModOwner];
-        myStratMods[myStratMods.length] = strategyModule;
+        console.log("completed stratmod");
+
+        // Update strat mod status
+        strategyModules[address(strategyModule)] = stratModDetails(stratModStatus.activating, stratModOwner);
+        
+        console.log("a special cluster for a special boy");
+        // Tell strat mod to go get operators
+        strategyModule.seekOperators();
+
+        // Add strat mod to owner's portfolio
+        StrategyModule[] storage myStratMods = myStrategyModules[stratModOwner];
+        myStratMods.push(strategyModule);
         myStrategyModules[stratModOwner] = myStratMods;
         return(address(strategyModule));
+    }
+
+    function updateStratModuleStatus(address _stratModOwner) external {
     }
 
     function returnModuleStatus(address _strategyModule) public view returns(stratModStatus) {
