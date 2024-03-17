@@ -90,7 +90,7 @@ contract AuctionContract {
 
     AuctionSetMember[] auctionSet; // Bear in mind that this array maintains sorting throughout!
 
-    function getAuctionSet() public view returns(AuctionSetMember[] memory) {
+    function getAuctionSet() external view returns(AuctionSetMember[] memory) {
         return auctionSet;
     }
 
