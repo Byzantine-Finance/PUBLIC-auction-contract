@@ -11,6 +11,9 @@ contract ByzantineFinance is Ownable {
     AuctionContract public auction;
     StrategyModule public strategyModule;
     ByzETH public byzETH;
+    uint liquidityRequirement = 10; // Liquidity reserve that should be kept
+    uint newModuleCounter;
+    uint liquidityCounter;
 
     uint8 dvtClusterSize = 4;
 
@@ -41,6 +44,7 @@ contract ByzantineFinance is Ownable {
     function depositEthForByzEth() payable external {
         require(msg.value > 0, "You need to send some ether");
         byzETH.mintByzEth(msg.value, msg.sender);
+        newModuleCounter += msg.value;
     }
 
     function withdrawthForByzEth(uint amountToWithdraw) external {
@@ -48,9 +52,31 @@ contract ByzantineFinance is Ownable {
         uint256 ethAmount = amountToWithdraw; // 1:1 Exchange
         require(address(this).balance >= ethAmount, "Insufficient ETH liquidity in contract");
         
+        if(newModuleCounter >= amountToWithdraw) {
+            newModuleCounter -= amountToWithdraw;
+        } else if (newModuleCounter + liquidityCounter >= amountToWithdraw) {
+            liquidityCounter -= amountToWithdraw - newModuleCounter;
+            newModuleCounter = 0;
+        } else {
+            revert("Withdrawals are currently paused.");
+        }
+
         bool success = byzETH.burnByzEth(amountToWithdraw, msg.sender);
         require(success);
         payable(msg.sender).transfer(ethAmount);
+
+    }
+
+    function getContractETHBalance() external view returns(uint256) {
+        return address(this).balance;
+    }
+
+    function createPoolModule() private {
+        if(newModuleCounter >= 32 ether * liquidityRequirement / 100) {
+            createStratModule(address(this), dvtClusterSize, address(auction));
+            liquidityCounter += (newModuleCounter - 32 ether);
+            newModuleCounter = 0;
+        }
     }
 
 
@@ -59,18 +85,20 @@ contract ByzantineFinance is Ownable {
     function createDedicatedModule() payable public onlyOwner {
         require(msg.value == 32 ether, "Exactly 32ETH are required. Please provide that amount.");
         address stratModOwner = msg.sender;
-        createStratModule(stratModOwner, dvtClusterSize, address(auction));
+        address myNewModule = createStratModule(stratModOwner, dvtClusterSize, address(auction));
+        console.log(myNewModule);
     }
 
 
     // STRATEGY MODULE SETUP
 
-    function createStratModule(address stratModOwner, uint8 _dvtClusterSize, address _auctionContract) public {
-        strategyModule = new StrategyModule(_dvtClusterSize, stratModOwner, _auctionContract); // Create a new strategy module
+    function createStratModule(address stratModOwner, uint8 _dvtClusterSize, address _auctionContract) public returns(address) {
+        strategyModule = (new StrategyModule){value: 32 ether}(_dvtClusterSize, stratModOwner, _auctionContract); // Create a new strategy module
         strategyModules[address(strategyModule)] = stratModDetails(stratModStatus.activating, stratModOwner); // Add this strategy module to our mapping to allow it to call for operators
         StrategyModule[] memory myStratMods = myStrategyModules[stratModOwner];
         myStratMods[myStratMods.length] = strategyModule;
         myStrategyModules[stratModOwner] = myStratMods;
+        return(address(strategyModule));
     }
 
     function returnModuleStatus(address _strategyModule) public view returns(stratModStatus) {

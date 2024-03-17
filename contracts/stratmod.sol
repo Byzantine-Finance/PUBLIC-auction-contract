@@ -13,7 +13,8 @@ contract StrategyModule {
 
     address[] public operatorSet;
 
-    constructor(uint8 _dvtClusterSize, address _stratModOwner, address _auctionContract) {
+    constructor(uint8 _dvtClusterSize, address _stratModOwner, address _auctionContract) payable {
+        require(msg.value == 32 ether, "Not enough ETH to fund this strategy module!");
         owner = payable(_stratModOwner);
         byzHQ = msg.sender;
         auctionContract = AuctionContract(_auctionContract);
