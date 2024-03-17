@@ -369,7 +369,6 @@ contract AuctionContract {
         - Do NOT slot in ops marked as "recently inactive" (we have the "lastDvtKick" property for that
         */
         if(auctionSet.length >= numberOfOps) {
-            console.log("selecting...");
             for(uint i = 0; i < auctionSet.length; i++) {
                 address operator = auctionSet[i].operator;
                 if(opCounter < numberOfOps) {
@@ -377,7 +376,6 @@ contract AuctionContract {
                         operatorsToReturn[opCounter] = operator;
                         operatorDetails[operator].assignedToStrategyModule = msg.sender;
                         operatorDetails[operator].opStat = OperatorStatus.pendingForDvt;
-                        removeFromAuctionSet(operator);
                         opCounter++;
                     }
                 } else {
@@ -385,13 +383,13 @@ contract AuctionContract {
                 }
             }
         }
-        console.log("nearly there");
 
         if(opCounter < numberOfOps) {
-            console.log("about to crash");
             revert("Not enough operators in auction set!");
         } else {
-            console.log("zoooom");
+            for(uint i = 0; i < operatorsToReturn.length; i++) {
+                removeFromAuctionSet(operatorsToReturn[i]);
+            }
             return(operatorsToReturn);
         }
     }
