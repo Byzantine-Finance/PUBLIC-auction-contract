@@ -103,7 +103,7 @@ contract AuctionContract {
             console.log("Explain");
             for(uint i = 0; i < auctionSet.length; i++) {
                 uint reverseIndex = auctionSet.length - 1 - i;
-                if(auctionSet[reverseIndex].auctionScore >= auctionScore) {
+                if(auctionSet[reverseIndex].auctionScore <= auctionScore) {
                     targetPosition = reverseIndex;
                     positionUpdated = true;
                     if(reverseIndex + 1 == auctionSet.length) { // Make sure not to go out of bounds
@@ -129,17 +129,23 @@ contract AuctionContract {
 
         uint targetPosition = 0;
         uint currentPosition = 0;
-        for(uint i = auctionSet.length - 1; i >= 0; i--) {
-            if(auctionSet[i].auctionScore <= newAuctionScore) {
-                targetPosition = i;
-                auctionSet[i + 1] = auctionSet[i];
-            }
+        bool positionUpdated = false;
+        console.log("Starting out!");
 
-            if(auctionSet[i].operator == operator) {
-                currentPosition = i;
+        for(uint i = 0; i < auctionSet.length; i++) {
+            positionUpdated = true;
+            uint reverseIndex = auctionSet.length - 1 - i;
+            if(auctionSet[reverseIndex].auctionScore >= newAuctionScore) {
+                targetPosition = reverseIndex;
+                if(auctionSet[reverseIndex].operator == operator) {
+                    currentPosition = i;
+                }
+                if(auctionSet[reverseIndex].auctionScore <= newAuctionScore) {
+                    targetPosition = reverseIndex;
+                }
             }
         }
-
+        console.log("Halfway!");
         if (targetPosition > currentPosition) {
             for(uint i = currentPosition + 1; i <= targetPosition; i++) {
                 auctionSet[i - 1] = auctionSet[i];
@@ -262,18 +268,20 @@ contract AuctionContract {
             console.log(msg.value);
             console.log("testing");
 
+            uint auctionScore = calculateAuctionScore(duration, bidPrice);
+
             if (operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork) {
                 uint oldPrice = calculateBidPrice(operatorDetails[msg.sender].bid.durationInDays, operatorDetails[msg.sender].bid.dailyVcPrice, operatorDetails[msg.sender].bid.clusterSize);
-                (bool success, ) = msg.sender.call{value: oldPrice}("");
+                (bool success, ) = payable(msg.sender).call{value: oldPrice}("");
                 require(success, "Reimbursement failed!");
+                updateAuctionSet(msg.sender, auctionScore);
+            } else {
+                addToAuctionSet(msg.sender, auctionScore);
+                operatorDetails[msg.sender].opStat = OperatorStatus.seekingWork;
             }
 
-            // If all goes well, then we note down the bid of the operators
-            uint auctionScore = calculateAuctionScore(duration, bidPrice);
             Bid memory myBid = Bid(duration, dailyVcPrice, clusterSize, auctionScore);
             operatorDetails[msg.sender].bid = myBid;
-            addToAuctionSet(msg.sender, auctionScore);
-            operatorDetails[msg.sender].opStat = OperatorStatus.seekingWork;
             emit NewBid(msg.sender, myBid);
 
         /*} else {
