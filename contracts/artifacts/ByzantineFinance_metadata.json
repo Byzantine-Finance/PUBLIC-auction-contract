@@ -66,9 +66,59 @@
 			},
 			{
 				"inputs": [],
-				"name": "createModule",
+				"name": "byzETH",
+				"outputs": [
+					{
+						"internalType": "contract ByzETH",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "createDedicatedModule",
 				"outputs": [],
 				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "contract StrategyModule",
+						"name": "targetModule",
+						"type": "address"
+					}
+				],
+				"name": "exitModule",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "myStrategyModules",
+				"outputs": [
+					{
+						"internalType": "contract StrategyModule",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -89,6 +139,25 @@
 				"name": "renounceOwnership",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_strategyModule",
+						"type": "address"
+					}
+				],
+				"name": "returnModuleStatus",
+				"outputs": [
+					{
+						"internalType": "enum ByzantineFinance.stratModStatus",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -115,9 +184,14 @@
 				"name": "strategyModules",
 				"outputs": [
 					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
+						"internalType": "enum ByzantineFinance.stratModStatus",
+						"name": "status",
+						"type": "uint8"
+					},
+					{
+						"internalType": "address",
+						"name": "stratModOwner",
+						"type": "address"
 					}
 				],
 				"stateMutability": "view",
@@ -194,6 +268,46 @@
 				"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
 			]
 		},
+		"@openzeppelin/contracts/interfaces/draft-IERC6093.sol": {
+			"keccak256": "0x60c65f701957fdd6faea1acb0bb45825791d473693ed9ecb34726fdfaa849dd7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ea290300e0efc4d901244949dc4d877fd46e6c5e43dc2b26620e8efab3ab803f",
+				"dweb:/ipfs/QmcLLJppxKeJWqHxE2CUkcfhuRTgHSn8J4kijcLa5MYhSt"
+			]
+		},
+		"@openzeppelin/contracts/security/ReentrancyGuard.sol": {
+			"keccak256": "0xa535a5df777d44e945dd24aa43a11e44b024140fc340ad0dfe42acf4002aade1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://41319e7f621f2dc3733511332c4fd032f8e32ad2aa7fd6f665c19741d9941a34",
+				"dweb:/ipfs/QmcYR3bd862GD1Bc7jwrU9bGxrhUu5na1oP964bDCu2id1"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC20/ERC20.sol": {
+			"keccak256": "0xc3e1fa9d1987f8d349dfb4d6fe93bf2ca014b52ba335cfac30bfe71e357e6f80",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c5703ccdeb7b1d685e375ed719117e9edf2ab4bc544f24f23b0d50ec82257229",
+				"dweb:/ipfs/QmTdwkbQq7owpCiyuzE7eh5LrD2ddrBCZ5WHVsWPi1RrTS"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+			"keccak256": "0xc6a8ff0ea489379b61faa647490411b80102578440ab9d84e9a957cc12164e70",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0ea104e577e63faea3b69c415637e99e755dcbf64c5833d7140c35a714d6d90c",
+				"dweb:/ipfs/Qmau6x4Ns9XdyynRCNNp3RhLqijJjFm7z5fyZazfYFGYdq"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
+			"keccak256": "0xaa761817f6cd7892fcf158b3c776b34551cde36f48ff9703d53898bc45a94ea2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0ad7c8d4d08938c8dfc43d75a148863fb324b80cf53e0a36f7e5a4ac29008850",
+				"dweb:/ipfs/QmcrhfPgVNf5mkdhQvy1pMv51TFokD3Y4Wa5WZhFqVh8UV"
+			]
+		},
 		"@openzeppelin/contracts/utils/Context.sol": {
 			"keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
 			"license": "MIT",
@@ -203,27 +317,35 @@
 			]
 		},
 		"contracts/auction.sol": {
-			"keccak256": "0x0bff9197a08202b63fe55ebf674335c83798eebac455a4817f7db30ec3a67330",
+			"keccak256": "0x7c0bf2d9d9428dc65f2a81937a0419af831e06d77fb9931255568f0098b3d6a5",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://78327aa9f988d5e7186e4f3b2b82a8b054b71013704bdaef9a3c06f6f9c5267a",
-				"dweb:/ipfs/QmbUVZJAMva4dGqCVv2cffT9aMr9qKSqNToPepfKbShScR"
+				"bzz-raw://5849017c81c445bc3deacf6b2678c0ae09b8a83080101e0d067cf2a9cb28d5cc",
+				"dweb:/ipfs/QmVEa1b1BppkMGf6VsdQeQgxnyFg3KL84Bs5RAHDxFmAiW"
+			]
+		},
+		"contracts/byzETH.sol": {
+			"keccak256": "0x825f5059692e7bd1f95bd3403d8f32bc95a2e4a2319d2327de1c56bc85d9bf49",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b8bf14a3399081c353071deb27d20f2d94752ce1dbcbb497dd5c43aae2092605",
+				"dweb:/ipfs/QmRSYQwvznMfBMPzpregHv6Rsh3vS1XbwKwqkfbvEAopex"
 			]
 		},
 		"contracts/byzantine_central.sol": {
-			"keccak256": "0xa0e162c94b35d88bf3797e2617fc86b5a99f6af178798d30d50000a618639144",
+			"keccak256": "0x3aed8645016769032d25d2fb49d3aee2ead18183d01b7beabbf2037140afaef0",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://a354714f8a55a1412932b15e5023053b5cb5a23b3bfcaf1806ee7c86ab5bb39e",
-				"dweb:/ipfs/QmNTjJthWD8fVC7PZZ3FBVKW7LH3gKYFVwcoWynJUhRs7g"
+				"bzz-raw://3a8ace46710d8e6f9609b206665106755d3d886129143fc94b3ec03454a19719",
+				"dweb:/ipfs/QmW8VMrwtrxTGo6ecaUPsGJUk74rH7nNR1CRdXh2ykzUts"
 			]
 		},
 		"contracts/stratmod.sol": {
-			"keccak256": "0x18ea20b2e0385590abd470d6326edbed3b1cf6de81cbc4705da698f5a7ea953e",
+			"keccak256": "0x0547588b30cf4ec0d2c21c9339df2cdddcf57c4b9e74bb9314513ea3f442ae1d",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://c0d28152cbd1739efd99aa9ba9f45b0e961248d106fbf353c86f225c13b10160",
-				"dweb:/ipfs/QmUXexAq5TvkDxTBpTwFqSpi3Drr7jQw7CnQc4Fk1WVhh3"
+				"bzz-raw://3300c99e12dec7313fbcdeb6f0617fad615d0b7dbd37c5be3145091438f92edd",
+				"dweb:/ipfs/QmTHxtJcC7PreEWRsTCgg1kdwicu8oTBtjTK7EpHrFWBRv"
 			]
 		},
 		"hardhat/console.sol": {

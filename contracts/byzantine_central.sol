@@ -5,10 +5,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 import "./auction.sol";
 import "./stratmod.sol";
+import "./byzETH.sol";
 
 contract ByzantineFinance is Ownable {
     AuctionContract public auction;
     StrategyModule public strategyModule;
+    ByzETH public byzETH;
 
     uint8 dvtClusterSize = 4;
 
@@ -29,6 +31,7 @@ contract ByzantineFinance is Ownable {
 
     constructor() Ownable(msg.sender) {
         auction = new AuctionContract();
+        byzETH = new ByzETH();
         console.log("Auction contract deployed at: ", address(auction));
         console.log("This contract deployed at: ", address(this));
     }

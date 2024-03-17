@@ -6,8 +6,8 @@ import "hardhat/console.sol";
 import "./byzantine_central.sol"; // Assurez-vous que le chemin d'importation est correct
 
 contract AuctionContract {
-    uint constant PERCENTAGE_SCALING_FACTOR = 10^18;
-    uint constant ETHER_SCALING_FACTOR = 10^18;
+    uint constant PERCENTAGE_SCALING_FACTOR = 10**18;
+    uint constant ETHER_SCALING_FACTOR = 10**18;
     uint public expectedValidatorReturn; // In ETH
     uint public maxDiscountRate; // The highest possible discount rate a node op can set (in %)
     uint public minDuration; // Minimum duration a node op has to bid for
@@ -23,8 +23,8 @@ contract AuctionContract {
         operatorBond = 1 ether;
     }
 
-    function updateMaxDiscount(uint8 newMaxDiscount) public {
-        maxDiscountRate = newMaxDiscount * PERCENTAGE_SCALING_FACTOR;
+    function updateMaxDiscount(uint newMaxDiscount) public {
+        maxDiscountRate = newMaxDiscount;
     }
 
     function updateOperatorBond(uint newOperatorBond) public {
@@ -94,16 +94,19 @@ contract AuctionContract {
         require(operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol, "Can't do that right now.");
 
         uint targetPosition = 0;
-        for(uint i = auctionSet.length - 1; i >= 0; i--) {
-            if(auctionSet[i].auctionScore <= auctionScore) {
-                targetPosition = i;
-                auctionSet[i + 1] = auctionSet[i];
-            } else {
-                break;
+        if(auctionSet.length <= 1) {
+            auctionSet.push(AuctionSetMember(operator, auctionScore));
+        } else {
+            for(uint i = auctionSet.length - 1; i >= 0; i--) {
+                if(auctionSet[i].auctionScore <= auctionScore) {
+                    targetPosition = i;
+                    auctionSet[i + 1] = auctionSet[i];
+                } else {
+                    break;
+                }
             }
+            auctionSet[targetPosition] = AuctionSetMember(operator, auctionScore);
         }
-
-        auctionSet[targetPosition] = AuctionSetMember(operator, auctionScore);
 
     }
 
@@ -196,9 +199,16 @@ contract AuctionContract {
         // Put expected return into memory because we call it a few times
         uint256 expectedReturn = expectedValidatorReturn;
 
+        console.log("Made it this far.");
+
         // Calculate what the bid should be and then make sure that exactly this amount was received
         uint8 clusterSize = 1; // This one needs to be updated later
-        uint256 dailyVcPrice = expectedReturn * (1 - discountRate / PERCENTAGE_SCALING_FACTOR);
+        uint256 dailyVcPrice = expectedReturn - (expectedReturn * discountRate) / (PERCENTAGE_SCALING_FACTOR * 100);
+
+        console.log(dailyVcPrice);
+
+        uint256 bidPrice = calculateBidPrice(duration, dailyVcPrice, clusterSize);
+        console.log(bidPrice);
 
         if (operatorDetails[msg.sender].opStat == OperatorStatus.seekingWork) {
             
@@ -208,14 +218,14 @@ contract AuctionContract {
 
             if(priceToPay > 0) {
                 // They pay us
-                require(msg.value == calculateBidPrice(duration, dailyVcPrice, clusterSize), "That is not the right payment amount.");
+                require(compareBidPrices(msg.value, uint256(priceToPay)), "That is not the right payment amount.");
             } else {
                 // We pay them
                 (bool success, ) = msg.sender.call{value: uint(-priceToPay)}("");
                 require(success, "Payment failed!");
             }
             // If all goes well, then we note down the bid of the operators
-            uint auctionScore = calculateAuctionScore(duration, dailyVcPrice, clusterSize);
+            uint auctionScore = calculateAuctionScore(duration, bidPrice);
             Bid memory myBid = Bid(duration, dailyVcPrice, clusterSize, auctionScore);
             operatorDetails[msg.sender].bid = myBid;
             updateAuctionSet(msg.sender, auctionScore);
@@ -224,14 +234,14 @@ contract AuctionContract {
         } else if (operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol) {
 
             // Do something for someone that has no bid yet.
-            require(msg.value == calculateBidPrice(duration, dailyVcPrice, clusterSize), "That is not the right payment amount.");
+            require(compareBidPrices(msg.value, bidPrice), "That is not the right payment amount.");
 
             // If all goes well, then we note down the bid of the operators
-            uint auctionScore = calculateAuctionScore(duration, dailyVcPrice, clusterSize);
+            uint auctionScore = calculateAuctionScore(duration, bidPrice);
             Bid memory myBid = Bid(duration, dailyVcPrice, clusterSize, auctionScore);
-            operatorDetails[msg.sender].opStat = OperatorStatus.seekingWork;
             operatorDetails[msg.sender].bid = myBid;
             addToAuctionSet(msg.sender, auctionScore);
+            operatorDetails[msg.sender].opStat = OperatorStatus.seekingWork;
             emit NewBid(msg.sender, myBid);
 
         } else {
@@ -239,10 +249,18 @@ contract AuctionContract {
         }
     }
 
+    function compareBidPrices(uint theirValue, uint ourValue) internal pure returns(bool) {
+        if(theirValue >= ourValue * 9999 / 10000 && theirValue <= ourValue * 10001 / 10000) {
+            return(true);
+        } else {
+            return(false);
+        }
+    }
+
 
 
 /********************************************************************/
-/**********   CUSTOM GETTER FUNCTIONS  ******************************/
+/*******************   CUSTOM GETTER FUNCTIONS  *********************/
 /********************************************************************/
 
     function getStatus(address operator) public view returns(OperatorStatus) {
@@ -264,8 +282,8 @@ contract AuctionContract {
         return(duration * dailyVcPrice / clusterSize);
     }
     
-    function calculateAuctionScore(uint duration, uint dailyVcPrice, uint8 clusterSize) internal pure returns(uint) {
-        return(duration * dailyVcPrice / clusterSize * ((1001^duration) / (1000^duration)));
+    function calculateAuctionScore(uint duration, uint bidPrice) internal pure returns(uint) {
+        return(duration * bidPrice * duration / 365);
     }
 
 

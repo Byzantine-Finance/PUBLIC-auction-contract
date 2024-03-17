@@ -116,11 +116,11 @@
 			]
 		},
 		"contracts/auction.sol": {
-			"keccak256": "0x9ebfe7dc8d3d0be658f6ba8936819ec266215da05788c29ffaf934d973c74292",
+			"keccak256": "0x286346fe197c659528d6f5bf98c8130f80206aae84ad1c60d3bacc74a5ee91e3",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://33abc9f5724cde5f92f336e720e0aebc67a2a4dac9c670832e2d3c5ce04d00b7",
-				"dweb:/ipfs/QmckcEiPy14XDT5UjYbkMHDNyfbNQsZZGCpmdAygsiMQhU"
+				"bzz-raw://c0c15a0a7359648aef3cdf49dca8be9be764553067a3f31a733965c38ea98cc7",
+				"dweb:/ipfs/QmfGr4Gpxqtm1iDzrJ4gmeMBKKewfwaXUfC31EmeyARyhW"
 			]
 		},
 		"contracts/byzantine_central.sol": {
