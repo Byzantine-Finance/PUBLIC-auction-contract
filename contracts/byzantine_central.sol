@@ -45,6 +45,7 @@ contract ByzantineFinance is Ownable {
         require(msg.value > 0, "You need to send some ether");
         byzETH.mintByzEth(msg.value, msg.sender);
         newModuleCounter += msg.value;
+        createPoolModule();
     }
 
     function withdrawthForByzEth(uint amountToWithdraw) external {
@@ -76,6 +77,7 @@ contract ByzantineFinance is Ownable {
             createStratModule(address(this), dvtClusterSize, address(auction));
             liquidityCounter += (newModuleCounter - 32 ether);
             newModuleCounter = 0;
+            
         }
     }
 
