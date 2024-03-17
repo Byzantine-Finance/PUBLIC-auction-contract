@@ -88,7 +88,11 @@ contract AuctionContract {
 /********   ALL ABOUT THE AUCTION SET (JOIN, UPDATE, LEAVE  *********/
 /********************************************************************/
 
-    AuctionSetMember[] public auctionSet; // Bear in mind that this array maintains sorting throughout!
+    AuctionSetMember[] auctionSet; // Bear in mind that this array maintains sorting throughout!
+
+    function getAuctionSet() public view returns(AuctionSetMember[] memory) {
+        return auctionSet;
+    }
 
     function addToAuctionSet(address operator, uint auctionScore) internal {
         require(operatorDetails[msg.sender].opStat == OperatorStatus.inProtocol, "Can't do that right now.");

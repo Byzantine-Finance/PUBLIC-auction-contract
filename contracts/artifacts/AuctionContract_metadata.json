@@ -78,30 +78,6 @@
 				"type": "event"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"name": "auctionSet",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "operator",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "auctionScore",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [],
 				"name": "expectedValidatorReturn",
 				"outputs": [
@@ -125,6 +101,31 @@
 				"name": "failedToSign",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getAuctionSet",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "operator",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "auctionScore",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct AuctionContract.AuctionSetMember[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -487,11 +488,11 @@
 			]
 		},
 		"contracts/auction.sol": {
-			"keccak256": "0xba397582e1be5c9288d68e311c0de9fea53349627c34cf8f2da988d4c9f4cbe6",
+			"keccak256": "0x856a52791dd3085d480e133120127cfd60224fdced457b160c56418f3a97c8d7",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f3c76ca9e85e768c1031ce600e0825bf1a27c43ae9ddf93f8f1b662b9ece7f58",
-				"dweb:/ipfs/QmSaxpJDjyjvNyWUnrU56F4ionwS7F5xguoPiJ6jxKsFuv"
+				"bzz-raw://c3f48b5ebef86a969066de7b0e7366363fb28c179f914eee47c1bb86c66001b6",
+				"dweb:/ipfs/QmQtPtT4Q5uQtVwNA55BV2eCSPFdt13HmHUnSGQ6K5X3Mf"
 			]
 		},
 		"contracts/byzETH.sol": {
